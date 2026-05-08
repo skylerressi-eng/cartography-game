@@ -75,6 +75,31 @@ Docs/                                 # Step-by-step setup per system
 7. Follow `Docs/00-Setup.md` through `Docs/19-EditorPython.md` to wire
    the rest (UMG widgets, materials, IMC swizzle modifiers).
 
+## Game world: Pirate Islands
+
+The default world is a CC-BY-4.0 Sketchfab scene by
+**amogusstrikesback2** (see `Content/ImportSource/PirateIslands/license.txt`).
+Buildings (`SM_Bld_*`) and props (`SM_Prop_*`) are hidden at runtime
+by `UBuildingHiderComponent` so the player explores an uncharted
+island feel — grass, palms, rocks, beaches, mangroves, clouds.
+
+After cloning, drop `scene.bin` (from your original
+`chicken_gun_pirateislands_reupload.zip`) into
+`Content/ImportSource/PirateIslands/` (it's git-ignored — too big),
+then in the UE5 editor:
+
+```
+py "Tools/import_pirate_islands.py"
+```
+
+See `Docs/20-Map.md` for the full flow, including how to keep
+specific buildings visible.
+
+This work is based on
+[*chicken gun pirateislands reupload*](https://sketchfab.com/3d-models/chicken-gun-pirateislands-reupload-893581df1abf4d35a0dd849b169722fc)
+by [amogusstrikesback2](https://sketchfab.com/amogusstrikesback2)
+licensed under [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/).
+
 ## Design pillars
 
 - Walking pace, no fast travel until earned through accurate mapping.

@@ -245,6 +245,7 @@ BP_DEFS = [
     ("BP_MapPin",             "MapPin",                  "/Game/Pins"),
     ("BP_Wildlife",           "Wildlife",                "/Game/Blueprints"),
     ("BP_ProceduralIsland",   "ProceduralIsland",        "/Game/Blueprints"),
+    ("BP_PirateIslandWorld",  "PirateIslandWorld",       "/Game/Blueprints"),
 ]
 
 

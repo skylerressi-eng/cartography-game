@@ -28,3 +28,6 @@ Saved/
 # Editor backups
 *.uasset.bak
 *.umap.bak
+
+# Pirate Islands binary buffer — too big for git, fetched from the zip
+Content/ImportSource/PirateIslands/scene.bin
