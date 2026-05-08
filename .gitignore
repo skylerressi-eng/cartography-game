@@ -1,0 +1,30 @@
+# Unreal generated/transient
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.vscode/
+.idea/
+
+# Compiled solution
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Build artifacts
+*.exe
+*.dll
+*.dylib
+*.so
+*.app
+
+# Editor backups
+*.uasset.bak
+*.umap.bak

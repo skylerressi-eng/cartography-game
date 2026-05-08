@@ -1,0 +1,56 @@
+# The Last Cartographer
+
+A quiet, single-player exploration & cartography game in Unreal Engine 5.4+.
+
+## What's in this repository
+
+This repo is a **C++ scaffold** for the systems described in the build plan.
+It compiles into a working `CartographyGame` runtime module with classes
+that cover all eight systems. The actual playable level — the island
+landscape, materials, UI widgets, and Blueprint subclasses that wire those
+C++ systems to input and gameplay — must be built inside the Unreal editor
+on Windows or macOS. See `Docs/00-Setup.md` for the bring-up sequence.
+
+## Project layout
+
+```
+CartographyGame.uproject              # Project file
+Config/                               # DefaultEngine/Game/Input.ini
+Source/
+  CartographyGame.Target.cs
+  CartographyGameEditor.Target.cs
+  CartographyGame/
+    CartographyGame.{h,cpp}           # Module entry
+    CartographyGame.Build.cs
+    Player/CartographerCharacter      # System 1
+    Map/FieldMapComponent             # System 2
+    Map/MapDrawingLibrary
+    Notebook/FieldNotebookComponent   # System 3
+    Notebook/MapPin
+    Inking/InkingDesk                 # System 4
+    GroundTruth/GroundTruthCapture    # System 5
+    GroundTruth/MapComparisonComponent
+    World/WorldResponseSubsystem      # System 6
+    World/HiddenLandmark
+    Progression/ProgressionSubsystem  # System 7
+    Save/CartographySaveGame          # System 8
+    Save/SaveLoadSubsystem
+Content/                              # Empty — populate from the editor
+Docs/                                 # Step-by-step setup per system
+```
+
+## Bring-up checklist (first time on Windows/macOS)
+
+1. Install Unreal Engine 5.4 (or newer 5.x).
+2. Right-click `CartographyGame.uproject` → **Generate Visual Studio project files**.
+3. Open the generated `.sln`, build the **Development Editor** target.
+4. Open `CartographyGame.uproject`. The editor compiles the module.
+5. Follow `Docs/00-Setup.md` through `Docs/08-SaveLoad.md` in order.
+
+## Design pillars
+
+- Walking pace, no fast travel until earned through accurate mapping.
+- Field map = pencil, erasable, no scoring.
+- Master map (at the home desk) = ink, permanent, scored silently.
+- The world *responds* to accuracy — never shows a number.
+- One island, ~1 km², zero combat, zero NPCs (or one hermit, max).
