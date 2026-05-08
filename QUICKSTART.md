@@ -1,12 +1,14 @@
-# Quickstart — clone to playable in ~15 minutes
+# Quickstart — clone to playable
 
-## 0. Prerequisites
+Three actions, one Python command, then **Play**.
 
-- **Unreal Engine 5.4** (or newer 5.x) installed via the Epic Games Launcher
+## 0. Once-per-machine prerequisites
+
+- **Unreal Engine 5.4** via the Epic Games Launcher.
 - **Visual Studio 2022** with the *Game development with C++* workload
   (Windows). On macOS, Xcode.
-- The original `chicken_gun_pirateislands_reupload.zip` you uploaded
-  (you'll need `scene.bin` from inside it — too big for git).
+- The original `chicken_gun_pirateislands_reupload.zip` you uploaded —
+  you'll grab `scene.bin` from inside it.
 
 ## 1. Clone the repo
 
@@ -17,36 +19,32 @@ cd cartography-game
 
 ## 2. Drop in `scene.bin`
 
-Unzip your original pirate islands zip and copy **only** `scene.bin`
-into:
+Unzip `chicken_gun_pirateislands_reupload.zip`, copy **only**
+`scene.bin` into:
 
 ```
 cartography-game/Content/ImportSource/PirateIslands/scene.bin
 ```
 
-(The folder already has `scene.gltf`, the textures, and the license.
-`scene.bin` is git-ignored — see `Docs/20-Map.md`.)
+(`scene.gltf`, the textures and the license are already in git.
+`scene.bin` is too big and stays out of git per `Docs/20-Map.md`.)
 
-## 3. Generate VS project files
+## 3. Generate VS project files + build
 
 Right-click `CartographyGame.uproject` →
 **Generate Visual Studio project files**.
 
-(macOS: `GenerateProjectFiles.command` from the engine install.)
-
-## 4. Build the C++ module
-
-Open the generated `CartographyGame.sln`. Set:
+Open `CartographyGame.sln`. Set:
 - Configuration = **Development Editor**
 - Platform = **Win64**
 
-Press **Ctrl+Shift+B** (Build → Build Solution). Wait ~3-5 minutes.
+Press **Ctrl+Shift+B**. Wait ~3-5 minutes for the first build.
 
-## 5. Open the project + run setup
+## 4. Open the project + run the bootstrap
 
-Double-click `CartographyGame.uproject`. The editor compiles and opens
-to an empty engine template map (intentional — `L_Island` doesn't
-exist yet on a fresh clone).
+Double-click `CartographyGame.uproject`. The editor compiles, opens
+to an engine template map (intentional — `L_Island` doesn't exist
+on a fresh clone yet).
 
 In the editor:
 
@@ -54,58 +52,73 @@ In the editor:
 2. Bottom-left dropdown: switch from **Cmd** to **Python**.
 3. Run:
    ```
-   py "Tools/setup_project.py"
+   py "Tools/bootstrap.py"
    ```
 
-This creates `L_Island.umap`, all render targets, all input actions,
-all Blueprint subclasses (BP_Cartographer, BP_GameMode, BP_WorldHider, …),
-imports the six DataTable CSVs, and wires defaults across them. Takes
-~30 seconds. Idempotent.
+That single command does **everything**:
 
-## 6. Import the islands
+- Creates folders, render targets, sound classes, MPC.
+- Creates input actions and `IMC_Default` **with the WASD/swizzle/
+  negate modifiers** so movement actually works.
+- Creates every Blueprint subclass (`BP_Cartographer`, `BP_GameMode`,
+  `BP_PlayerController`, `BP_WorldHider`, …).
+- Builds the three brush materials (`M_PencilBrush`, `M_EraserBrush`,
+  `M_InkBrush`) with the right node graph and parameter exposure.
+- Imports the six DataTable CSVs.
+- Creates UMG widget stubs (`WBP_HUD`, `WBP_FieldMap`, `WBP_Notebook`,
+  `WBP_Inking`, `WBP_Pause`, `WBP_Compass`, `WBP_DiscoveryToast`)
+  and wires them to `BP_PlayerController`.
+- Creates the `L_Island` level and populates it: directional sun
+  light tagged "SunLight", sky atmosphere, sky light, exponential
+  height fog, volumetric cloud, water plane, player start, and
+  a `BP_WorldHider` (so buildings auto-hide on play).
+- Imports `scene.gltf` and spawns the islands at the origin.
+- Sets project-default GameMode and startup map.
 
-```
-py "Tools/import_pirate_islands.py"
-```
+Takes about a minute end-to-end. Idempotent — safe to re-run.
 
-This loads `L_Island`, imports `scene.gltf`, spawns the imported scene
-actor at the origin, and drops a `BP_WorldHider` so the buildings
-auto-hide on play.
+## 5. Press Play
 
-## 7. Press Play
-
-Click **Play** (or Alt+P). You should walk on the pirate islands.
-
----
-
-## What still needs human hands
-
-Three things the script can't safely automate. Each is a one-shot
-~5–30 minute job:
-
-1. **WASD modifiers on `IMC_Default`** — open the asset, add Swizzle
-   Input Axis Values + Negate to the WASD mappings on `IA_Move`.
-   See `Docs/01-Player.md`.
-2. **Brush materials** — `M_PencilBrush`, `M_EraserBrush`, `M_InkBrush`
-   per `Docs/02-FieldMap.md`.
-3. **UMG widgets** — the field map, notebook, inking, HUD widgets per
-   `Docs/13-UI.md`. The C++ base classes are done; you build the
-   layouts in BP.
-
-Until you do (1), the player won't move. Until (2), drawing won't
-render. Until (3), no UI shows.
+Click **Play** (or Alt+P). You should walk on the pirate islands
+with WASD, look with the mouse, jump with Space, press M / N / E / LMB
+for the field map / notebook / interact / draw bindings.
 
 ---
 
-## Things you can flip if something breaks
+## What still benefits from polish (not blocking play)
 
-| Symptom                                | Knob                                                    |
-|----------------------------------------|---------------------------------------------------------|
-| Editor opens to a black void           | Run `setup_project.py` again — should create L_Island. |
-| Buildings still visible after Play     | Check the spawned `BP_WorldHider` Hider component's `bApplyOnBeginPlay = true`. |
-| Buildings *not* visible at all in editor | Toggle `bReveal = true`, call `Apply` from the Outliner. |
-| Pin/landmark positions look wrong       | `BP_GameMode.WorldOriginXY`/`WorldSizeXY` — match to the imported scene's bounds (run `Recompute Island Bounds` from the actor). |
-| Game crashes on Play                    | `Output Log` will tell you which UMG/material asset is null. Most "must-create" assets are listed in step 5/6 above. |
+The bootstrap creates **structurally valid but visually empty** UMG
+widgets. The game runs and doesn't crash, but field map / notebook /
+inking screens won't have nice layouts until you open each one and
+add child widgets per `Docs/13-UI.md`.
 
-If you get stuck, every system has its own doc:
-`Docs/00-Setup.md` … `Docs/20-Map.md`.
+Specifically:
+
+- `WBP_HUD` — add `Stamina_Bar` (Progress Bar), `Ink_Bar` (Progress
+  Bar), `Time_Text` / `Region_Text` / `Prompt_Text` / `TutorialHint_Text`
+  (Text Blocks). The C++ `UHUDWidget::NativeTick` populates them
+  automatically once they exist with those exact names.
+- `WBP_Compass` — add a single `Arrow_Image`.
+- `WBP_DiscoveryToast` — add `Title_Text` / `Subtitle_Text`.
+- `WBP_FieldMap` / `WBP_Notebook` / `WBP_Inking` — assemble the
+  layouts described in `Docs/02-FieldMap.md` / `Docs/03-Notebook.md`
+  / `Docs/04-Inking.md`.
+
+Each is roughly 10-30 minutes in the editor.
+
+---
+
+## Troubleshooting
+
+| Symptom                                | Knob                                                   |
+|----------------------------------------|--------------------------------------------------------|
+| Editor opens to a black void           | Re-run `py "Tools/bootstrap.py"`. It's idempotent.    |
+| WASD doesn't move character            | Open `IMC_Default`, verify W/A/S/D have `IA_Move` mappings + Swizzle/Negate modifiers. |
+| Buildings still visible after Play     | Confirm `BP_WorldHider` exists in level outliner. Open it; Hider component `bApplyOnBeginPlay = true`. |
+| Pin/landmark positions look off        | `BP_GameMode.WorldOriginXY/SizeXY` — re-run bootstrap to refresh from imported bounds. |
+| Map drawing draws nothing              | Open `M_PencilBrush`. Confirm node graph exists. If empty, delete and re-run bootstrap. |
+| Crash on Play with null UMG            | Open `WBP_HUD` etc; add the named child widgets above. |
+
+If you get stuck, every system has its own doc (`Docs/00-Setup.md`
+through `Docs/20-Map.md`), and `Docs/Architecture.md` explains how
+they fit together.
