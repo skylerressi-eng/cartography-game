@@ -37,6 +37,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Hide")
 	TArray<FString> KeepExceptions;
 
+	/** If set, only this actor (and its components) is scanned. If null,
+	 *  every actor in the world is scanned (used by BP_WorldHider). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Hide")
+	TObjectPtr<AActor> Target;
+
 	/** Apply automatically when the game starts. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Hide")
 	bool bApplyOnBeginPlay = true;
@@ -49,7 +54,13 @@ public:
 	int32 ApplyToOwner();
 
 	UFUNCTION(BlueprintCallable, Category="Hide")
-	int32 ApplyToActor(AActor* Target);
+	int32 ApplyToActor(AActor* InTarget);
+
+	UFUNCTION(BlueprintCallable, Category="Hide")
+	int32 ApplyToWorld();
+
+	UFUNCTION(BlueprintCallable, Category="Hide")
+	int32 Apply();
 
 	UFUNCTION(BlueprintCallable, Category="Hide")
 	void RevealAll();

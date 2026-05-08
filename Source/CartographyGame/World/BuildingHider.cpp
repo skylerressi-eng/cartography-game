@@ -3,6 +3,7 @@
 #include "World/BuildingHider.h"
 
 #include "Components/PrimitiveComponent.h"
+#include "EngineUtils.h"
 #include "GameFramework/Actor.h"
 
 UBuildingHiderComponent::UBuildingHiderComponent()
@@ -13,7 +14,7 @@ UBuildingHiderComponent::UBuildingHiderComponent()
 void UBuildingHiderComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	if (bApplyOnBeginPlay) { ApplyToOwner(); }
+	if (bApplyOnBeginPlay) { Apply(); }
 }
 
 bool UBuildingHiderComponent::MatchesPrefix(const FString& Name) const
@@ -31,12 +32,12 @@ bool UBuildingHiderComponent::MatchesPrefix(const FString& Name) const
 
 int32 UBuildingHiderComponent::ApplyToOwner() { return ApplyToActor(GetOwner()); }
 
-int32 UBuildingHiderComponent::ApplyToActor(AActor* Target)
+int32 UBuildingHiderComponent::ApplyToActor(AActor* InTarget)
 {
-	if (!Target) { return 0; }
+	if (!InTarget) { return 0; }
 	int32 Count = 0;
 	TArray<UActorComponent*> Components;
-	Target->GetComponents(Components);
+	InTarget->GetComponents(Components);
 	for (UActorComponent* C : Components)
 	{
 		UPrimitiveComponent* P = Cast<UPrimitiveComponent>(C);
@@ -52,7 +53,7 @@ int32 UBuildingHiderComponent::ApplyToActor(AActor* Target)
 
 	// Also walk attached child actors (glTF imports often spawn them).
 	TArray<AActor*> Children;
-	Target->GetAttachedActors(Children, /*bResetArray*/ true, /*bRecursivelyIncludeAttachedActors*/ true);
+	InTarget->GetAttachedActors(Children, /*bResetArray*/ true, /*bRecursivelyIncludeAttachedActors*/ true);
 	for (AActor* Child : Children)
 	{
 		if (!Child) { continue; }
@@ -65,6 +66,32 @@ int32 UBuildingHiderComponent::ApplyToActor(AActor* Target)
 	}
 
 	return Count;
+}
+
+int32 UBuildingHiderComponent::ApplyToWorld()
+{
+	UWorld* World = GetWorld();
+	if (!World) { return 0; }
+	int32 Count = 0;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* A = *It;
+		if (!A) { continue; }
+		Count += ApplyToActor(A);
+	}
+	return Count;
+}
+
+int32 UBuildingHiderComponent::Apply()
+{
+	if (Target) { return ApplyToActor(Target); }
+	if (AActor* Owner = GetOwner())
+	{
+		TArray<AActor*> Attached;
+		Owner->GetAttachedActors(Attached, true, true);
+		if (Attached.Num() > 0) { return ApplyToActor(Owner); }
+	}
+	return ApplyToWorld();
 }
 
 void UBuildingHiderComponent::RevealAll()

@@ -2,6 +2,10 @@
 
 A quiet, single-player exploration & cartography game in Unreal Engine 5.4+.
 
+> **New here?** Open [`QUICKSTART.md`](QUICKSTART.md). It walks the
+> exact 7-step bring-up: clone, drop in `scene.bin`, generate VS
+> projects, build, run two Python scripts, press Play.
+
 ## What's in this repository
 
 This repo is a **C++ scaffold** for the systems described in the build plan.
