@@ -30,6 +30,14 @@ public:
 	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|UI") float UIScale = 1.f;
 	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|UI") bool bShowCompass = true;
 
+	// --- Accessibility ----
+	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|Accessibility") bool bLargeText = false;
+	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|Accessibility") bool bHoldToConfirm = false;
+	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|Accessibility") bool bReduceMotion = false;
+	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|Accessibility") bool bColorblindFriendlyMap = false;
+	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|Accessibility") float SubtitleOpacity = 1.f;
+	UPROPERTY(Config, BlueprintReadWrite, Category="Settings|Accessibility") bool bShowControlHints = true;
+
 	UFUNCTION(BlueprintCallable, Category="Settings")
 	static UCartoUserSettings* Get();
 

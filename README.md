@@ -64,7 +64,16 @@ Docs/                                 # Step-by-step setup per system
 2. Right-click `CartographyGame.uproject` → **Generate Visual Studio project files**.
 3. Open the generated `.sln`, build the **Development Editor** target.
 4. Open `CartographyGame.uproject`. The editor compiles the module.
-5. Follow `Docs/00-Setup.md` through `Docs/08-SaveLoad.md` in order.
+5. **Window → Output Log → Python** dropdown → run:
+   ```
+   py "Tools/setup_project.py"
+   ```
+   This auto-creates render targets, input actions, BP subclasses, and
+   imports all data tables. See `Docs/19-EditorPython.md`.
+6. Drop a `BP_ProceduralIsland` into a new Open World level for instant
+   walkable terrain — see `Docs/18-Procedural.md`.
+7. Follow `Docs/00-Setup.md` through `Docs/19-EditorPython.md` to wire
+   the rest (UMG widgets, materials, IMC swizzle modifiers).
 
 ## Design pillars
 

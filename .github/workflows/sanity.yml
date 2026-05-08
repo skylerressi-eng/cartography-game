@@ -1,0 +1,77 @@
+name: Sanity
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  repo-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify project layout
+        run: |
+          set -e
+          test -f CartographyGame.uproject
+          test -f Source/CartographyGame/CartographyGame.Build.cs
+          test -f Source/CartographyGame.Target.cs
+          test -f Source/CartographyGameEditor.Target.cs
+          test -f Config/DefaultEngine.ini
+          test -f Tools/setup_project.py
+          for f in Regions Biomes Tools Landmarks Lore Achievements; do
+            test -f "Content/Data/DT_${f}.csv"
+          done
+          echo "Layout OK"
+
+      - name: Verify every .cpp has a matching .h or is a module entry
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys
+          root = pathlib.Path("Source/CartographyGame")
+          missing = []
+          for cpp in root.rglob("*.cpp"):
+              # Module entry has a sibling .h with the same name.
+              h = cpp.with_suffix(".h")
+              if not h.exists() and cpp.name not in ("CartographyGame.cpp",):
+                  missing.append(str(cpp))
+          if missing:
+              print("Missing headers for:", *missing, sep="\n  ")
+              sys.exit(1)
+          print(f"All {sum(1 for _ in root.rglob('*.cpp'))} .cpp files have matching .h.")
+          PY
+
+      - name: Verify every header has a #pragma once
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys
+          bad = []
+          for h in pathlib.Path("Source").rglob("*.h"):
+              text = h.read_text(errors="ignore")
+              if "#pragma once" not in text:
+                  bad.append(str(h))
+          if bad:
+              print("Missing #pragma once:", *bad, sep="\n  ")
+              sys.exit(1)
+          print("Header guards OK.")
+          PY
+
+      - name: Lint markdown link presence
+        run: |
+          python3 - <<'PY'
+          import pathlib, re, sys
+          # Just verify that every Doc cross-reference resolves.
+          missing = []
+          docs = list(pathlib.Path("Docs").rglob("*.md")) + [pathlib.Path("README.md")]
+          for d in docs:
+              text = d.read_text()
+              for m in re.finditer(r"`Docs/([\w\-./]+\.md)`", text):
+                  ref = pathlib.Path("Docs") / m.group(1).replace("Docs/", "")
+                  if not ref.exists():
+                      missing.append(f"{d}: -> {ref}")
+          if missing:
+              print("Broken doc refs:", *missing, sep="\n  ")
+              sys.exit(1)
+          print("Doc refs OK.")
+          PY

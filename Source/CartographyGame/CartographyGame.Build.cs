@@ -25,7 +25,8 @@ public class CartographyGame : ModuleRules
 			"AudioMixer",
 			"DeveloperSettings",
 			"NavigationSystem",
-			"AIModule"
+			"AIModule",
+			"ProceduralMeshComponent"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
