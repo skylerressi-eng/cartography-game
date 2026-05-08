@@ -14,8 +14,9 @@
 import os
 import unreal
 
-import setup_project as base_setup       # noqa: E402  (script-relative import)
-import import_pirate_islands as importer  # noqa: E402
+import setup_project as base_setup        # noqa: E402  (script-relative import)
+import import_pirate_islands as importer   # noqa: E402
+import build_widgets as widgets            # noqa: E402
 
 EAS = unreal.EditorAssetLibrary
 ALT = unreal.AssetToolsHelpers.get_asset_tools()
@@ -337,6 +338,59 @@ def populate_island():
 
 
 # ---------------------------------------------------------------------------
+# 5. Sample gameplay content in L_Island
+# ---------------------------------------------------------------------------
+
+def populate_sample_content():
+    log("Sample content (inking desk, landmarks, fast-travel)")
+
+    def existing_labels():
+        return {a.get_actor_label() for a in EUL.get_all_level_actors()}
+
+    def spawn_bp(bp_path, label, location):
+        if label in existing_labels(): return None
+        bp = EAS.load_asset(bp_path)
+        if bp is None: return None
+        actor = EUL.spawn_actor_from_class(bp.generated_class(), location)
+        if actor is not None:
+            actor.set_actor_label(label)
+            log("  + " + label)
+        return actor
+
+    # Inking desk near origin (for the "go home and ink" loop).
+    spawn_bp("/Game/Blueprints/BP_InkingDesk", "Cabin_InkingDesk",
+             unreal.Vector(800, 0, 100))
+
+    # GroundTruthCapture high above the world centre.
+    gt = spawn_bp("/Game/Blueprints/BP_GroundTruthCapture",
+                  "GroundTruth_Capture", unreal.Vector(0, 0, 30000))
+    if gt:
+        try:
+            gt.set_actor_rotation(unreal.Rotator(-90, 0, 0), False)
+        except Exception:
+            pass
+
+    # A couple of hidden landmarks for the "reveal on accuracy" demo.
+    for label, loc in [
+        ("Hidden_Beacon",  unreal.Vector( 6000,  4000, 1500)),
+        ("Hidden_Shrine",  unreal.Vector(-5500, -3500, 1200)),
+        ("Hidden_Spring",  unreal.Vector( 2000, -6500,  900)),
+    ]:
+        spawn_bp("/Game/Landmarks/BP_HiddenLandmark", label, loc)
+
+    # Fast-travel stones — one at cabin, two at far points.
+    for label, loc in [
+        ("FastTravel_Cabin", unreal.Vector(   600, 0,  100)),
+        ("FastTravel_North", unreal.Vector(-15000, 0, 1500)),
+        ("FastTravel_East",  unreal.Vector(     0, 15000, 1500)),
+    ]:
+        spawn_bp("/Game/Blueprints/BP_FastTravelStone", label, loc)
+
+    try: EUL.save_current_level()
+    except Exception: pass
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -348,7 +402,9 @@ def run():
     setup_brush_materials()
     setup_imc_modifiers()
     setup_widgets()
+    widgets.run()              # lay out actual UMG content
     populate_island()
+    populate_sample_content()  # one inking desk + a few landmarks
 
     # Optional: glTF import if scene.bin is in place.
     bin_path = os.path.join(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_dir()),

@@ -4,18 +4,21 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
+#include "Core/CartographyPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Inking/InkingDesk.h"
 #include "InputActionValue.h"
 #include "Map/FieldMapComponent.h"
 #include "Notebook/FieldNotebookComponent.h"
+#include "Player/InteractionComponent.h"
 
 ACartographerCharacter::ACartographerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -131,4 +134,83 @@ void ACartographerCharacter::HandleDrawStarted(const FInputActionValue& /*Value*
 void ACartographerCharacter::HandleDrawStopped(const FInputActionValue& /*Value*/)
 {
 	OnDrawStopped();
+}
+
+// --- Native default behaviour ---
+
+void ACartographerCharacter::OnToggleFieldMap_Implementation()
+{
+	if (ACartographyPlayerController* PC = Cast<ACartographyPlayerController>(GetController()))
+	{
+		PC->ToggleFieldMap();
+	}
+}
+
+void ACartographerCharacter::OnToggleNotebook_Implementation()
+{
+	if (ACartographyPlayerController* PC = Cast<ACartographyPlayerController>(GetController()))
+	{
+		PC->ToggleNotebook();
+	}
+}
+
+void ACartographerCharacter::OnInteractPressed_Implementation()
+{
+	// Try interaction-component focus first, then nearby InkingDesk.
+	if (UInteractionComponent* I = FindComponentByClass<UInteractionComponent>())
+	{
+		if (I->TryInteract()) { return; }
+	}
+	TArray<AActor*> Overlapping;
+	GetOverlappingActors(Overlapping, AInkingDesk::StaticClass());
+	for (AActor* A : Overlapping)
+	{
+		if (AInkingDesk* Desk = Cast<AInkingDesk>(A))
+		{
+			if (Desk->TryBeginInking(this))
+			{
+				if (ACartographyPlayerController* PC = Cast<ACartographyPlayerController>(GetController()))
+				{
+					PC->OpenInking();
+				}
+				return;
+			}
+		}
+	}
+}
+
+void ACartographerCharacter::OnDrawStarted_Implementation()
+{
+	if (!bFieldMapOpen) { return; }
+	bDrawing = true;
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) { return; }
+	float MX, MY; int32 SX, SY;
+	if (PC->GetMousePosition(MX, MY))
+	{
+		PC->GetViewportSize(SX, SY);
+		LastDrawUV = (SX > 0 && SY > 0) ? FVector2D(MX / SX, MY / SY) : FVector2D::ZeroVector;
+	}
+}
+
+void ACartographerCharacter::OnDrawStopped_Implementation()
+{
+	bDrawing = false;
+}
+
+void ACartographerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (!bDrawing || !bFieldMapOpen || !FieldMap) { return; }
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) { return; }
+	float MX, MY; int32 SX, SY;
+	if (!PC->GetMousePosition(MX, MY)) { return; }
+	PC->GetViewportSize(SX, SY);
+	if (SX <= 0 || SY <= 0) { return; }
+	const FVector2D NowUV(FMath::Clamp(MX / SX, 0.f, 1.f),
+	                      FMath::Clamp(MY / SY, 0.f, 1.f));
+	FieldMap->DrawStroke(LastDrawUV, NowUV, ECartoMapTarget::FieldMap, ECartoBrushMode::Pencil);
+	LastDrawUV = NowUV;
 }

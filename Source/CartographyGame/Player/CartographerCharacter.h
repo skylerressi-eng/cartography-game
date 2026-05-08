@@ -62,20 +62,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Movement", meta=(ClampMin="50", ClampMax="600"))
 	float WalkSpeed = 200.f;
 
-	// Hooks for Blueprints / widgets.
-	UFUNCTION(BlueprintImplementableEvent, Category="Map")
+	// Hooks. Default C++ implementations talk to the player controller's
+	// widget toggles and to nearby InkingDesks; override in BP if needed.
+	UFUNCTION(BlueprintNativeEvent, Category="Map")
 	void OnToggleFieldMap();
 
-	UFUNCTION(BlueprintImplementableEvent, Category="Notebook")
+	UFUNCTION(BlueprintNativeEvent, Category="Notebook")
 	void OnToggleNotebook();
 
-	UFUNCTION(BlueprintImplementableEvent, Category="Interaction")
+	UFUNCTION(BlueprintNativeEvent, Category="Interaction")
 	void OnInteractPressed();
 
-	UFUNCTION(BlueprintImplementableEvent, Category="Map")
+	UFUNCTION(BlueprintNativeEvent, Category="Map")
 	void OnDrawStarted();
 
-	UFUNCTION(BlueprintImplementableEvent, Category="Map")
+	UFUNCTION(BlueprintNativeEvent, Category="Map")
 	void OnDrawStopped();
 
 	UFUNCTION(BlueprintCallable, Category="Map")
@@ -84,8 +85,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Map")
 	void SetFieldMapOpen(bool bOpen) { bFieldMapOpen = bOpen; }
 
+	UPROPERTY(BlueprintReadOnly, Category="Map")
+	bool bDrawing = false;
+
+	UPROPERTY(BlueprintReadOnly, Category="Map")
+	FVector2D LastDrawUV = FVector2D::ZeroVector;
+
+	virtual void OnToggleFieldMap_Implementation();
+	virtual void OnToggleNotebook_Implementation();
+	virtual void OnInteractPressed_Implementation();
+	virtual void OnDrawStarted_Implementation();
+	virtual void OnDrawStopped_Implementation();
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	void Move(const FInputActionValue& Value);
