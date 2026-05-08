@@ -54,6 +54,24 @@ Size `(100000, 100000)`.
 - `MapComparison.RunComparison` does a CPU readback of two render
   targets — call it once per inking session, **never per frame**.
 
+## Subsystem registry
+
+| Class                       | Scope          | Lifetime          |
+|-----------------------------|----------------|-------------------|
+| `UWorldResponseSubsystem`   | World          | per-level         |
+| `UTimeOfDaySubsystem`       | World (tick)   | per-level         |
+| `UWeatherSubsystem`         | World (tick)   | per-level         |
+| `UMusicDirector`            | World (tick)   | per-level         |
+| `UFastTravelSubsystem`      | World          | per-level         |
+| `UBiomeManager`             | World          | per-level         |
+| `UProgressionSubsystem`     | Game Instance  | session           |
+| `ULoreSubsystem`            | Game Instance  | session           |
+| `UDiscoveryLog`             | Game Instance  | session           |
+| `UAchievementSubsystem`     | Game Instance  | session           |
+| `UTutorialController`       | Game Instance  | session           |
+| `USaveLoadSubsystem`        | Game Instance  | session           |
+| `USaveSlotManager`          | Game Instance  | session           |
+
 ## Performance budget
 
 - Render targets: 2× 2048² RGBA8 ≈ 32 MB GPU. Acceptable.

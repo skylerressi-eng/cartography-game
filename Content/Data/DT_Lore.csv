@@ -1,0 +1,8 @@
+Name,LoreId,Title,Body,Author,OrderHint
+Beacon01,Beacon01,"Beacon Keeper's Note","I lit the beacon every night for forty winters. The last ship I saw was carrying a cartographer.","Keeper",10
+Jetty01,Jetty01,"Tide Marker","Mark the jetty stones at low tide. Half the year they vanish.","",20
+Stones01,Stones01,"At the Stones","I do not know what these stones meant. I leave them as I found them.","",30
+Spring01,Spring01,"Spring Letter","If you find this, the spring is sweet still. Drink. Rest.","",40
+Shrine01,Shrine01,"Shrine Plaque","Brought ashore by a wave that came twice.","",50
+Tree01,Tree01,"Burned Tree","Three storms ago. The fire jumped to nothing else.","",60
+Hermit01,Hermit01,"Hermit's Greeting","I do not want a map. I want the island as it is. But you may stay.","Hermit",70

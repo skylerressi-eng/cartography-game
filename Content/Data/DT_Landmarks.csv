@@ -1,0 +1,9 @@
+Name,LandmarkId,DisplayName,RegionId,WorldLocation,RequiresAccuracy,LoreEntryId
+NorthBeacon,NorthBeacon,"Old Beacon",NorthCape,"(X=-30000,Y=-30000,Z=4000)",Accurate,Beacon01
+SunkenJetty,SunkenJetty,"Sunken Jetty",NorthCape,"(X=-40000,Y=-10000,Z=200)",Inaccurate,Jetty01
+StoneCircle,StoneCircle,"Stone Circle",InnerHighlands,"(X=10000,Y=15000,Z=8000)",Accurate,Stones01
+CartographersCabin,CartographersCabin,"Cartographer's Cabin",EastWoods,"(X=20000,Y=-20000,Z=800)",,
+HiddenSpring,HiddenSpring,"Hidden Spring",EastWoods,"(X=35000,Y=-12000,Z=600)",Accurate,Spring01
+TidePoolShrine,TidePoolShrine,"Tide-pool Shrine",SouthCove,"(X=-15000,Y=30000,Z=100)",Accurate,Shrine01
+LightningTree,LightningTree,"Lightning Tree",InnerHighlands,"(X=25000,Y=18000,Z=4000)",Accurate,Tree01
+HermitsLamp,HermitsLamp,"Hermit's Lamp",InnerHighlands,"(X=8000,Y=22000,Z=5000)",Accurate,Hermit01

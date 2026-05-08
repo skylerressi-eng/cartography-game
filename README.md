@@ -11,6 +11,25 @@ landscape, materials, UI widgets, and Blueprint subclasses that wire those
 C++ systems to input and gameplay — must be built inside the Unreal editor
 on Windows or macOS. See `Docs/00-Setup.md` for the bring-up sequence.
 
+## What got expanded
+
+In addition to the eight original systems the scaffold now includes:
+
+- **Day/night** subsystem (sun rotation, phase events) — `Time/`
+- **Weather** subsystem (forecast blend, accuracy glitches) — `Weather/`
+- **Audio mood + music director** — `Audio/`
+- **Fast travel** markers and subsystem — `FastTravel/`
+- **Stamina, rest, interaction** components — `Player/`
+- **Region & biome** (data-driven) + trail recording + wildlife — `World/`
+- **Symbol stamps, ruler/compass tools, bookmarks** — `Map/`
+- **Lore + discovery + tutorial** subsystems — `Lore/`, `Discovery/`, `Tutorial/`
+- **Achievements + user settings** — `Achievements/`, `Settings/`
+- **Multi-slot save manager** with thumbnails — `Save/SaveSlotManager`
+- **GameMode / PlayerController / HUD / Compass / Toast** base classes — `Core/`, `UI/`
+- **Six DataTable CSVs** ready to import — `Content/Data/`
+
+Read `Docs/00-Setup.md` first, then `Docs/01-Player.md` ... `Docs/17-Data.md`.
+
 ## Project layout
 
 ```

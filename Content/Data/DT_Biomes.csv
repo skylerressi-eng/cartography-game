@@ -1,0 +1,5 @@
+Name,BiomeId,DisplayName,AmbientLayer,WildlifeTag,FogTint,MoveSpeedMultiplier
+Coastal,Coastal,Coastal,Coast,Gull,"(R=0.55,G=0.62,B=0.7,A=1)",1.0
+Forest,Forest,Forest,Forest,Bird,"(R=0.45,G=0.55,B=0.45,A=1)",0.95
+Mountain,Mountain,Mountain,Wind,Eagle,"(R=0.6,G=0.6,B=0.65,A=1)",0.9
+Wetland,Wetland,Wetland,Reeds,Frog,"(R=0.5,G=0.55,B=0.45,A=1)",0.85

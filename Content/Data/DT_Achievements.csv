@@ -1,0 +1,8 @@
+Name,AchievementId,DisplayName,Description,bHidden
+FirstStroke,FirstStroke,"First Stroke","Make your first mark on the field map.",False
+FirstInk,FirstInk,"First Ink","Ink anything onto the master map.",False
+FirstAccurate,FirstAccurate,"First True Line","Map a cell accurately.",False
+AllRegions,AllRegions,"Cartographer","Inked at least one accurate cell in every region.",False
+HiddenLight,HiddenLight,"The Light Before Dawn","Find the Old Beacon at first light.",True
+QuietMile,QuietMile,"A Quiet Mile","Walk a kilometre without opening the map.",False
+NotebookFull,NotebookFull,"Field Notes","Place 50 notes.",False

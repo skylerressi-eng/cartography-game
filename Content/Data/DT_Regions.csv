@@ -1,0 +1,5 @@
+Name,RegionId,DisplayName,FlavorText,OriginXY,SizeXY,BiomeId,MapTint,LandmarkCount
+NorthCape,NorthCape,"North Cape","Wind-bitten cliffs.","(X=-50000,Y=-50000)","(X=50000,Y=50000)",Coastal,"(R=0.86,G=0.92,B=1,A=1)",4
+EastWoods,EastWoods,"East Woods","Pines and silence.","(X=0,Y=-50000)","(X=50000,Y=50000)",Forest,"(R=0.7,G=0.85,B=0.7,A=1)",5
+SouthCove,SouthCove,"South Cove","Tide pools and gulls.","(X=-50000,Y=0)","(X=50000,Y=50000)",Coastal,"(R=0.9,G=0.95,B=1,A=1)",3
+InnerHighlands,InnerHighlands,"Inner Highlands","Where the wind speaks.","(X=0,Y=0)","(X=50000,Y=50000)",Mountain,"(R=0.95,G=0.92,B=0.86,A=1)",6

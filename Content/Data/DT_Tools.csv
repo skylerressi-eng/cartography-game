@@ -1,0 +1,10 @@
+Name,ToolId,DisplayName,Description,RegionsRequired
+Pencil,Pencil,Pencil,"Soft graphite. Erasable.",0
+Eraser,Eraser,Eraser,"Lifts pencil from parchment.",0
+Ink,Ink,Ink,"Permanent. Spent by drawing.",0
+Compass,Compass,Compass,"A simple north arrow.",1
+Elevation,Elevation,Elevation Tool,"Mark heights.",3
+Watercolor,Watercolor,Watercolour,"Adds biome tint.",5
+FastTravel,FastTravel,Fast Travel,"Walk known ground in moments.",8
+Ruler,Ruler,Straight-edge,"Draw straight lines.",2
+Compass2,Compass2,Drafting Compass,"Draw exact circles.",4

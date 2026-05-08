@@ -20,13 +20,19 @@ public class CartographyGame : ModuleRules
 			"SlateCore",
 			"RenderCore",
 			"RHI",
-			"ImageWrapper"
+			"ImageWrapper",
+			"GameplayTags",
+			"AudioMixer",
+			"DeveloperSettings",
+			"NavigationSystem",
+			"AIModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"AIModule",
-			"NavigationSystem"
+			"Slate",
+			"SlateCore",
+			"Niagara"
 		});
 	}
 }
