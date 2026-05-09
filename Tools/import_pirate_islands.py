@@ -31,7 +31,7 @@ def open_island_level():
         warn("L_Island level missing. Run Tools/setup_project.py first.")
         return False
     try:
-        ls = unreal.LevelEditorSubsystem()
+        ls = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
         ls.load_level(full)
     except Exception:
         unreal.EditorLevelLibrary.load_level(full)

@@ -32,14 +32,24 @@ def get_tree(wbp):
 def construct(tree, cls, name):
     """tree.construct_widget exists in UE 5.x via WidgetTree."""
     try:
-        return tree.construct_widget(cls, unreal.Name(name))
+        return tree.construct_widget(cls, name)
+    except Exception as e:
+        warn("construct_widget({}, {}) failed: {}".format(cls.__name__, str(e)))
+        return None
+
+
+def make_fill_size(value=1.0):
+    s = unreal.SlateChildSize()
+    try:
+        s.set_editor_property("value", value)
+        s.set_editor_property("size_rule", unreal.SlateSizeRule.FILL)
     except Exception:
         try:
-            # Older API
-            return unreal.WidgetTree.construct_widget(tree, cls, name)
-        except Exception as e:
-            warn("construct_widget({}, {}) failed: {}".format(cls.__name__, name, e))
-            return None
+            s.value = value
+            s.size_rule = unreal.SlateSizeRule.FILL
+        except Exception:
+            pass
+    return s
 
 
 def set_root(tree, root):
@@ -49,12 +59,26 @@ def set_root(tree, root):
         warn("set root_widget failed: " + str(e))
 
 
+def make_anchors(min_x, min_y, max_x, max_y):
+    a = unreal.Anchors()
+    try:
+        a.set_editor_property("minimum", unreal.Vector2D(min_x, min_y))
+        a.set_editor_property("maximum", unreal.Vector2D(max_x, max_y))
+    except Exception:
+        try:
+            a.minimum = unreal.Vector2D(min_x, min_y)
+            a.maximum = unreal.Vector2D(max_x, max_y)
+        except Exception:
+            pass
+    return a
+
+
 def add_to_canvas(canvas, widget, anchors=(0,0,1,1), offsets=(0,0,0,0), alignment=(0,0)):
     """Add a child to a Canvas Panel with specific anchor + offset."""
     if canvas is None or widget is None: return None
     try:
         slot = canvas.add_child_to_canvas(widget)
-        slot.set_editor_property("anchors", unreal.Anchors(*anchors))
+        slot.set_editor_property("anchors", make_anchors(*anchors))
         slot.set_editor_property("offsets", unreal.Margin(*offsets))
         slot.set_editor_property("alignment", unreal.Vector2D(*alignment))
         slot.set_editor_property("auto_size", False)
@@ -155,11 +179,11 @@ def build_HUD():
     time_text   = construct(tree, unreal.TextBlock, "Time_Text")
     region_text = construct(tree, unreal.TextBlock, "Region_Text")
     if time_text:
-        try: time_text.set_editor_property("text", unreal.Text("--:--"))
+        try: time_text.set_editor_property("text", "--:--")
         except Exception: pass
         vbox_add(rvbox, time_text)
     if region_text:
-        try: region_text.set_editor_property("text", unreal.Text(""))
+        try: region_text.set_editor_property("text", "")
         except Exception: pass
         vbox_add(rvbox, region_text)
 
@@ -234,7 +258,7 @@ def build_FieldMap():
 
     title = construct(tree, unreal.TextBlock, "Title_Text")
     if title:
-        try: title.set_editor_property("text", unreal.Text("Field Map"))
+        try: title.set_editor_property("text", "Field Map")
         except Exception: pass
     add_to_canvas(root, title, anchors=(0.5,0,0.5,0), offsets=(-100,10,100,50), alignment=(0.5,0))
 
@@ -254,14 +278,14 @@ def build_Inking():
     set_image_to_render_target(field, "/Game/RenderTargets/RT_FieldMap")
     if field:
         slot = hbox_add(root, field)
-        try: slot.set_editor_property("size", unreal.SlateChildSize(value=1.0, size_rule=unreal.SlateSizeRule.FILL))
+        try: slot.set_editor_property("size", make_fill_size())
         except Exception: pass
 
     master = construct(tree, unreal.Image, "Master_Image")
     set_image_to_render_target(master, "/Game/RenderTargets/RT_MasterMap")
     if master:
         slot = hbox_add(root, master)
-        try: slot.set_editor_property("size", unreal.SlateChildSize(value=1.0, size_rule=unreal.SlateSizeRule.FILL))
+        try: slot.set_editor_property("size", make_fill_size())
         except Exception: pass
 
     compile_and_save(wbp)
@@ -285,7 +309,7 @@ def build_Notebook():
 
     title = construct(tree, unreal.TextBlock, "Title_Text")
     if title:
-        try: title.set_editor_property("text", unreal.Text("Field Notebook"))
+        try: title.set_editor_property("text", "Field Notebook")
         except Exception: pass
     add_to_canvas(root, title, anchors=(0.5,0,0.5,0), offsets=(-150,50,150,90), alignment=(0.5,0))
 
@@ -312,7 +336,7 @@ def build_Pause():
         btn = construct(tree, unreal.Button, "Btn_" + label)
         txt = construct(tree, unreal.TextBlock, "Lbl_" + label)
         if txt:
-            try: txt.set_editor_property("text", unreal.Text(label))
+            try: txt.set_editor_property("text", label)
             except Exception: pass
         if btn and txt:
             try: btn.add_child(txt)

@@ -341,7 +341,7 @@ def setup_level():
         log("L_Island exists, skipping")
         return
     try:
-        ls = unreal.LevelEditorSubsystem()
+        ls = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
         ls.new_level(full)
         log("Created /Game/Maps/L_Island")
     except Exception as e:

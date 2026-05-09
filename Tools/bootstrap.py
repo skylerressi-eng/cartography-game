@@ -152,8 +152,9 @@ def setup_imc_modifiers():
                 return
             mapping = unreal.EnhancedActionKeyMapping()
             mapping.action = action
-            k = unreal.InputCoreLibrary.get_key_for_name(unreal.Name(key_name)) if hasattr(unreal, 'InputCoreLibrary') else None
-            if k is None:
+            try:
+                k = unreal.InputCoreLibrary.get_key_for_name(key_name)
+            except Exception:
                 k = unreal.Key(key_name)
             mapping.key = k
             mapping.modifiers = modifiers
@@ -268,7 +269,7 @@ def populate_island():
         warn("L_Island missing — base setup didn't create it.")
         return
     try:
-        ls = unreal.LevelEditorSubsystem()
+        ls = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
         ls.load_level(full)
     except Exception:
         EUL.load_level(full)
@@ -284,24 +285,27 @@ def populate_island():
             log("  + " + label)
         return actor
 
+    def make_movable(actor):
+        try:
+            rc = actor.root_component
+            if rc: rc.set_mobility(unreal.ComponentMobility.MOVABLE)
+        except Exception:
+            pass
+
     # Sun (DirectionalLight tagged "SunLight")
     sun = spawn(unreal.DirectionalLight, "SunLight",
                 unreal.Vector(0, 0, 5000), unreal.Rotator(-45, 0, 0))
     if sun:
-        try:
-            sun.set_mobility(unreal.ComponentMobility.MOVABLE)
-            sun.tags = [unreal.Name("SunLight")]
-        except Exception:
-            pass
+        make_movable(sun)
+        try: sun.tags = ["SunLight"]
+        except Exception: pass
 
     # Sky atmosphere
     spawn(unreal.SkyAtmosphere, "SkyAtmosphere", unreal.Vector(0, 0, 0))
 
     # Sky light
     sky = spawn(unreal.SkyLight, "SkyLight", unreal.Vector(0, 0, 1500))
-    if sky:
-        try: sky.set_mobility(unreal.ComponentMobility.MOVABLE)
-        except Exception: pass
+    if sky: make_movable(sky)
 
     # Exponential height fog
     spawn(unreal.ExponentialHeightFog, "HeightFog", unreal.Vector(0, 0, 0))
