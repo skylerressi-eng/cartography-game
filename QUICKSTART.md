@@ -77,7 +77,16 @@ That single command does **everything**:
 
 Takes about a minute end-to-end. Idempotent — safe to re-run.
 
-## 5. Press Play
+## 5. (Optional) Verify
+
+```
+py "Tools/verify_setup.py"
+```
+
+Lists any required asset that didn't get created. If there's anything,
+re-run `bootstrap.py` — both scripts are idempotent.
+
+## 6. Press Play
 
 Click **Play** (or Alt+P). You should walk on the pirate islands
 with WASD, look with the mouse, jump with Space, press M / N / E / LMB

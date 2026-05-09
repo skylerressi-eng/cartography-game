@@ -204,6 +204,7 @@ BP_DEFS = [
     ("BP_ProceduralIsland",   "ProceduralIsland",        "/Game/Blueprints"),
     ("BP_PirateIslandWorld",  "PirateIslandWorld",       "/Game/Blueprints"),
     ("BP_WorldHider",         "WorldHider",              "/Game/Blueprints"),
+    ("BP_LoreNote",           "LoreNote",                "/Game/Blueprints"),
 ]
 
 
